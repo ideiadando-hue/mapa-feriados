@@ -16,8 +16,8 @@ type Evento = {
 
 const C = {
   national: "#1f7a4d",
-  state: "#3d9970",
-  municipal: "#6fbf8f",
+  state: "#2563a8",
+  municipal: "#7c5cbf",
   ponto: "#c98a0e",
   luto: "#4a5568",
   normal: "#e5e7eb",
