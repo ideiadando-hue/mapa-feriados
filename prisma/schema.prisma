@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EventType {
+  FERIADO
+  PONTO_FACULTATIVO
+  LUTO_OFICIAL
+  SUSPENSAO
+}
+
+enum Scope {
+  NATIONAL
+  STATE
+  MUNICIPAL
+}
+
+enum Confidence {
+  UNVERIFIED
+  PROJECTED
+  CONFIRMED
+}
+
+model CalendarEvent {
+  id           String           @id @default(uuid())
+  title        String
+  eventType    EventType
+  scope        Scope
+  state        String?
+  city         String?
+  date         DateTime
+  endDate      DateTime?
+  suspendsWork Boolean          @default(true)
+  isProjected  Boolean          @default(false)
+  sourceWeight Float
+  confidence   Confidence       @default(UNVERIFIED)
+  published    Boolean          @default(false)
+  legalBasis   String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  sources      CalendarSource[]
+
+  @@index([date, scope])
+  @@index([state, date])
+  @@index([published, date])
+  @@index([eventType, date])
+}
+
+model CalendarSource {
+  id         String        @id @default(uuid())
+  eventId    String
+  event      CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url        String
+  publisher  String
+  sourceType String        @default("official")
+  weight     Float
+  excerpt    String?
+  fetchedAt  DateTime      @default(now())
+
+  @@index([eventId])
+}
